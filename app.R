@@ -25,8 +25,8 @@ ui <- dashboardPage(
         sliderInput("itrtns", "Iterations",
                     min = 0, max = 100, value = 0, step = 1),
         selectInput("func", "Function",
-                    choices = list("2x - x^2" = 1,
-                                   "-x^4 + 6x^3 - 11x^2 + 6x" = 2),
+                    choices = list("Poisson" = 1,
+                                   "Binomial" = 2),
                     selected = 1)
       )
     )
