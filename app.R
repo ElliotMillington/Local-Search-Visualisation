@@ -4,20 +4,6 @@ library(shinydashboard)
 
 ## Functions ----
 source("funcs.R")
-# making the animation work
-# https://stackoverflow.com/questions/43337147/r-shiny-adding-to-plot-via-a-loop/43344162#43344162
-invalidateLaterNew <- function (millis, session = getDefaultReactiveDomain(), update = TRUE) {
-  if(update){
-    ctx <- shiny:::.getReactiveEnvironment()$currentContext()
-    shiny:::timerCallbacks$schedule(millis, function() {
-      if (!is.null(session) && session$isClosed()) {
-        return(invisible())
-      }
-      ctx$invalidate()
-    })
-    invisible()
-  }
-}
 
 ## Tab pages ----
 source("intro_tab.R")
@@ -40,11 +26,12 @@ ui <- dashboardPage(
         #             min = 0, max = 100, value = 0, step = 1),
         actionButton("nextItter", "Next step"),
         actionButton("finish", "Finish"),
+        actionButton("reset", "Reset"),
         selectInput("func", "Function",
                     choices = list("Poisson" = 1,
                                    "Binomial" = 2),
                     selected = 1),
-        numericInput("strtval", "Starting value", 1.5, min = 1.5, max = 4),
+        numericInput("strtval", "Starting value", 1.5, min = 1.5, max = 5),
         numericInput("convval", "Convergence criterion", 1e-6, min = 1e-10, max = 1e-3)
       )
     )
@@ -65,10 +52,15 @@ server <- function(input, output, session) {
   #input data
   dat <- c(2,2,3,4,4)
   n <- length(dat)
+  
   i <- reactiveVal(1)
 
   observeEvent(input$nextItter, {
     i(i() + 1)
+  })
+  
+  observeEvent(input$reset, {
+    i(1)
   })
 
   ##Plots ----
@@ -99,6 +91,7 @@ server <- function(input, output, session) {
     #abline(intercept, slope, color, linewidth)
 
   })
+  
   observeEvent(input$finish, {
 
     iterhist <- steep_accent(input$strtval, dat, input$convval)
@@ -127,36 +120,7 @@ server <- function(input, output, session) {
     i(ii)
   })
 
-
-  output$new_ralph_plot <- renderPlot({
-
-    #define Poisson-Loglikelihood
-    loglikpois <- function(theta) {
-      -n*theta+sum(dat)*log(theta)
-    }
-
-    #define first derivative of Poisson-Loglikelihood
-    grad <- function(theta) {-n+sum(dat)/theta}
-
-
-
-    #Plot Poisson-Loglikelihood and its first derivative
-    plot(loglikpois, ylab="y", xlim=c(1.5,5.5), ylim=c(-3,4.5), lwd=2, main="The Newton-Raphson-Algorithm")
-    curve(grad, from=1.5, to=5.5, lwd=2, col="green", add=T)
-    abline(h=0, lty=2)
-    legend(x = "topright",
-           legend = c("f(x)", "f'(x)"),
-           col = c("black", "green"),
-           lwd = 2)
-
-    ###draw point and slope dependent on selected iteration
-    i=input$itrtns+1
-    points(th.vec[i()],LLp[i()], col="blue", pch=20, lwd=5)
-    abline(LLp[i()]-(LLp2[i()]*th.vec[i()]), LLp2[i()], col="red", lwd=2) #abline(intercept, slope, color)
-    #abline(v=th.vec[i+1], lty=3, lwd=2, col="red")
-    clip(-5,5,0,LLp[i()+1])
-    abline(v=th.vec[i()+1], lty=3, lwd=3, col="red")
-  })
+  output$new_raph_plot <- renderPlot(plot_new_raph("poisson", dat, i(), input$strtval))
 }
 
 shinyApp(ui, server)
