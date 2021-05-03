@@ -1,6 +1,6 @@
 ## libraries ----
 library(shiny)
-library(shinydashboard)
+library(shinydashboard) #Guides on how to use this are at: ttps://rstudio.github.io/shinydashboard/
 
 ## Functions ----
 source("funcs.R")
@@ -31,7 +31,7 @@ ui <- dashboardPage(
                     choices = list("Poisson" = 1,
                                    "Binomial" = 2),
                     selected = 1),
-        numericInput("strtval", "Starting value", 1.5, min = 1.5, max = 5),
+        sliderInput("strtval", "Starting value", 1.5, min = 1.5, max = 5),
         numericInput("convval", "Convergence criterion", 1e-6, min = 1e-10, max = 1e-3)
       )
     )

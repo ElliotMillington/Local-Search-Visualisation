@@ -7,14 +7,14 @@ loglikpois <- function(dat, theta, n){
   return(out)
 }
 
-loglikfun <- function(distribution) {
-  out <- c()
-  if (distribution == "poisson") {
-    out$loglik <- poisson_lik
-    out$loglikdv <- poisson_lik_df
-  }
-  return(out)
-}
+# loglikfun <- function(distribution) {
+#   out <- c()
+#   if (distribution == "poisson") {
+#     out$loglik <- poisson_lik
+#     out$loglikdv <- poisson_lik_df
+#   }
+#   return(out)
+# }
 
 plot_steep <- function(dat, strt, convval) {
   iterhist <- steep_accent(strtval, dat, convval)
@@ -86,7 +86,7 @@ plot_new_raph <- function(distribution, dat=c(2,2,3,4,4), i, strt) {
     }
     
     ##draw point and slope dependent on selected iteration
-    text(1.5, -2, paste("Iter: ", i), pos = 2)
+    text(2, -2, paste("Iter: ", i), pos = 2)
     points(th.vec[i],LLp[i], col="blue", pch=20, lwd=5)
     abline(LLp[i]-(LLp2[i]*th.vec[i]), LLp2[i], col="red", lwd=2) #abline(intercept, slope, color)
     #abline(v=th.vec[i+1], lty=3, lwd=2, col="red")
