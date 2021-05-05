@@ -50,15 +50,15 @@ server <- function(input, output, session) {
   assign("invalidateLater", invalidateLaterNew, "package:shiny")
 
   #input data
-  dat <- c(2,2,3,4,4)
-  n <- length(dat)
-  
+  data <- c(2, 2, 3, 4, 4)
+  n <- length(data)
+
   i <- reactiveVal(1)
 
   observeEvent(input$nextItter, {
     i(i() + 1)
   })
-  
+
   observeEvent(input$reset, {
     i(1)
   })
@@ -66,38 +66,46 @@ server <- function(input, output, session) {
   ##Plots ----
   output$steep_plot <- renderPlot({
 
-    iterhist <- steep_accent(input$strtval, dat, input$convval)
+    iterhist <- steep_accent(input$strtval, data, input$convval)
 
-    # make sure that i does not leave the plotting range (a bit of a dirty trick)
+    # Make sure that i does not leave the plotting range (a bit of a dirty trick):
     if(i() > nrow(iterhist)){
       i(i() - 1)
     }
 
-    #define Poisson-Loglikelihood
+    # Define Poisson-Loglikelihood:
     loglikpois <- function(theta) {
-      -n*theta+sum(dat)*log(theta)
+      -n * theta + sum(data) * log(theta)
     }
 
-    #Plot Poisson-Loglikelihood
-    plot(loglikpois, xlim=c(1.5,4), ylim=c(-2,2), lwd=2, main="The Steepest-Ascent-Algorithm")
-    ###draw point and slope dependent on selected iteration
-    points(iterhist$theta[i()],iterhist$ell[i()], col="blue", pch=20, lwd=3)
+    # Plot Poisson-Loglikelihood:
+    plot(loglikpois, xlim = c(1.5, 4), ylim = c(-2, 2), lwd = 2,
+         main = "The Steepest-Ascent-Algorithm", ylab = "Log Likelihood", xlab = "")
+
+    # Draw point and slope dependent on selected iteration:
+    points(iterhist$theta[i()],iterhist$ell[i()], col  = "blue", pch = 20, lwd = 3)
+    # clip(-2, 2, -1, 1) # attempt to make abline shorter
     abline(iterhist$ell[i()]-iterhist$ellp[i()]*iterhist$theta[i()], iterhist$ellp[i()], col="red", lwd=2)
     if(i() == nrow(iterhist)){
       text((1.5+4)/2, -2, "Converged")
     }
     text(4, -2, paste0("Iter: ", i()), pos = 2)
 
-    #abline(intercept, slope, color, linewidth)
+    legend(x = "topright",
+           legend = c("f(x)", "f'(x)"),
+           col = c("black", "red"),
+           lwd = 2)
+
 
   })
-  
+
   observeEvent(input$finish, {
 
-    iterhist <- steep_accent(input$strtval, dat, input$convval)
-    #define Poisson-Loglikelihood
+    iterhist <- steep_accent(input$strtval, data, input$convval)
+
+    # Define Poisson-Loglikelihood:
     loglikpois <- function(theta) {
-      -n*theta+sum(dat)*log(theta)
+      -n * theta + sum(data) * log(theta)
     }
 
     ii <- i()
@@ -107,20 +115,29 @@ server <- function(input, output, session) {
       ii <<- ii + 1
       invalidateLaterNew(100, session,  ii < nrow(iterhist))
 
-      plot(loglikpois, xlim=c(1.5,4), ylim=c(-2,2), lwd=2, main="The Steepest-Ascent-Algorithm")
-      ###draw point and slope dependent on selected iteration
-      points(iterhist$theta[ii],iterhist$ell[ii], col="blue", pch=20, lwd=3)
-      abline(iterhist$ell[ii]-iterhist$ellp[ii]*iterhist$theta[ii], iterhist$ellp[ii], col="red", lwd=2)
+      # Plot Poisson-Loglikelihood:
+      plot(loglikpois, xlim = c(1.5, 4), ylim = c(-2, 2), lwd = 2,
+           main = "The Steepest-Ascent-Algorithm", ylab = "Log Likelihood", xlab = "")
+
+      # Draw point and slope dependent on selected iteration:
+      points(iterhist$theta[ii],iterhist$ell[ii], col = "blue", pch = 20, lwd = 3)
+      abline(iterhist$ell[ii]-iterhist$ellp[ii]*iterhist$theta[ii], iterhist$ellp[ii], col = "red", lwd = 2)
       if(ii == nrow(iterhist)){
-        text((1.5+4)/2, -2, "Converged")
+        text((1.5+4) / 2, -2, "Converged")
       }
       text(4, -2, paste0("Iter: ", ii), pos = 2)
+
+      legend(x = "topright",
+             legend = c("f(x)", "f'(x)"),
+             col = c("black", "red"),
+             lwd = 2)
+
     })
 
     i(ii)
   })
 
-  output$new_raph_plot <- renderPlot(plot_new_raph("poisson", dat, i(), input$strtval))
+  output$new_raph_plot <- renderPlot(plot_new_raph("poisson", data, i(), input$strtval))
 }
 
 shinyApp(ui, server)
