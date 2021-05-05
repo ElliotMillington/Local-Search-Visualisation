@@ -85,8 +85,10 @@ server <- function(input, output, session) {
     # Draw point and slope dependent on selected iteration:
     points(iterhist$theta[i()],iterhist$ell[i()], col  = "blue", pch = 20, lwd = 3)
     # clip(-2, 2, -1, 1) # attempt to make abline shorter
-    abline(iterhist$ell[i()]-iterhist$ellp[i()]*iterhist$theta[i()], iterhist$ellp[i()], col="red", lwd=2)
-    if(i() == nrow(iterhist)){
+    abline(iterhist$ell[i()]-iterhist$ellp[i()]*iterhist$theta[i()], iterhist$ellp[i()],
+           col = "red", lwd = 2)
+
+    if (i() == nrow(iterhist)) {
       text((1.5+4)/2, -2, "Converged")
     }
     text(4, -2, paste0("Iter: ", i()), pos = 2)
@@ -96,6 +98,8 @@ server <- function(input, output, session) {
            col = c("black", "red"),
            lwd = 2)
 
+    # Attempt to plot delta:
+    # plot(abs(iterhist$theta[i()+1]-iterhist$theta[i()]))
 
   })
 
