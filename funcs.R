@@ -1,4 +1,4 @@
-#Log likelihood algorithm
+# Log likelihood Poisson:
 loglikpois <- function(data, theta, n) {
   ll   <- -n * theta + sum(data) * log(theta)
   grad <- -n + sum(data) / theta
@@ -7,11 +7,12 @@ loglikpois <- function(data, theta, n) {
   return(out)
 }
 
-loglikbinom <- function(successes=7,theta,n=10){
+# Log likelihood Binomial:
+loglikbinom <- function(theta, n = 10, successes = 7){
   ll <- successes*log(theta)+(n-successes)*log(1-theta)
   grad <- successes/theta - (n-successes)/(1-theta)
   hess <- -successes/theta^2 - (n-successes)/(1-theta)^2
-  out<-list(ll=ll,grad=grad,hess=hess)
+  out <- list(ll=ll, grad=grad, hess=hess)
   return(out)
 }
 # loglikfun <- function(distribution) {
@@ -40,25 +41,26 @@ loglikbinom <- function(successes=7,theta,n=10){
 # }
 #
 steep_accent <- function(strtval, data, delta, maxiter = 500, alpha = 0.015,
-                         LL = NULL, LLp = NULL, distribution = 1){
+                         LL = NULL, LLp = NULL, distribution = 1, successes = 7){
   th.vec <- strtval
 
-  if(distribution==1){
+  if (distribution == 1) {
     n <- length(data)
     out <- loglikpois(data, th.vec[1], n)
-  }else{
-    out <- loglikbinom(theta = th.vec[1])
+  } else {
+    out <- loglikbinom(theta = th.vec[1], n = 10, successes = successes)
   }
+
   LL[1] <- out$ll; LLp[1] <- out$grad
   convergence <- FALSE
   i <- 1
   while ((!convergence) & (i < maxiter))
   {
     th.vec[i+1] <- th.vec[i] + alpha*out$grad
-    if(distribution==1){
-    out <- loglikpois(data, th.vec[i+1], n)
-    }else{
-      out <- loglikbinom(theta = th.vec[i+1])
+    if (distribution == 1){
+      out <- loglikpois(data, th.vec[i+1], n)
+    } else {
+      out <- loglikbinom(theta = th.vec[i+1], successes = successes)
     }
     LL[i+1] <- out$ll; LLp[i+1] <- out$grad
     if ((abs(th.vec[i+1]-th.vec[i])) < delta) { convergence <- TRUE }
@@ -88,7 +90,7 @@ plot_new_raph <- function(distribution, data = c(2,2,3,4,4), i, strt) {
     y_dx <- grad(x, data)
 
     plot(x, y, type = "l", xlim = c(1.5, 5.5), ylim = c(-3, 4.5), lwd = 2,
-         main = "The Newton-Raphson-Algorithm", ylab = "Log Likelihood", xlab = "")
+         main = "The Newton-Raphson-Algorithm", ylab = "Log Likelihood", xlab = expression(theta))
     lines(x, y_dx, col = "red")
     abline(h = 0, lty = 2)
     legend(x = "topright",
@@ -100,14 +102,14 @@ plot_new_raph <- function(distribution, data = c(2,2,3,4,4), i, strt) {
       i <- i - 1
     }
 
-    ##draw point and slope dependent on selected iteration
+    # Draw point and slope dependent on selected iteration
     text(2, -2, paste("Iter: ", i), pos = 2)
     points(th.vec[i], LLp[i], col = "blue", pch = 20, lwd = 5)
     #clip(LLp[i]-1, LLp[i]+1, LLp[i]-1, LLp[i]+1)
     abline(LLp[i]-(LLp2[i]*th.vec[i]), LLp2[i], col = "green", lwd = 2) #abline(intercept, slope, color)
     #abline(v=th.vec[i+1], lty=3, lwd=2, col="green")
-    clip(-5,5,0,LLp[i])
-    abline(v=th.vec[i], lty = 2, lwd = 2, col = "green")
+    #clip(-5,5,0,LLp[i])
+    #abline(v=th.vec[i], lty = 2, lwd = 2, col = "green")
 }
 
 new_raph <- function(data, distribution, start_pos) {
