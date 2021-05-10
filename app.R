@@ -32,22 +32,18 @@ ui <- dashboardPage(
                     choices = list("Poisson"  = 1, "Binomial" = 2),
                     selected = 1),
 
-        conditionalPanel("input.func == 1",{
-          box(
-            background = "navy",
-            sliderInput("pois_start_val", "Starting value", 1.5, min = 1, max = 5),
-            sliderInput("pois_mean",      "Mean",           2.5, min = 1, max = 5),
-            sliderInput("pois_n",         "Observations",   10,  min = 1, max = 100)
-          )
-        }),
-        conditionalPanel("input.func == 2",{
-          box(
-            background = "navy",
-            sliderInput("binom_start_val", "Starting value", .5, min = 0, max = 1),
-            sliderInput("binom_successes", "Successes",       3, min = 1, max = 100),
-            sliderInput("binom_n",         "Observations",   10, min = 1, max = 100)
-          )
-        }),
+        conditionalPanel(
+          "input.func == 1",
+          sliderInput("pois_start_val", "Starting value", 1.5, min = 1, max = 5),
+          sliderInput("pois_mean",      "Mean",           2.5, min = 1, max = 5),
+          sliderInput("pois_n",         "Observations",   10,  min = 1, max = 100)
+        ),
+        conditionalPanel(
+          "input.func == 2",
+          sliderInput("binom_start_val", "Starting value", .5, min = 0, max = 1),
+          sliderInput("binom_successes", "Successes",       3, min = 1, max = 100),
+          sliderInput("binom_n",         "Observations",   10, min = 1, max = 100)
+        ),
 
         numericInput("criterion", "Convergence criterion", 1e-5, min = 1e-10, max = 1e-3)
       )
