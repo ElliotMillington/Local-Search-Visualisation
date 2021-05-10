@@ -172,6 +172,11 @@ server <- function(input, output, session) {
       loglikbinom <- function(theta, successes = input$successes, n1 = 10){
         successes*log(theta)+(n1-successes)*log(1-theta)
       }
+      par(mfrow = c(2, 1))
+
+      # Plot Poisson-Loglikelihood:
+      plot(loglikpois, xlim = c(1.5, 4), ylim = c(-2, 2), lwd = 2,
+           main = "The Steepest-Ascent-Algorithm", ylab = "Log Likelihood", xlab = "")
 
       ii <- i()
 
@@ -230,7 +235,11 @@ server <- function(input, output, session) {
 
       })
 
-      i(ii)
+      # Plot the iteration history:
+      plot(iterhist$t[1:ii], iterhist$theta[1:ii], xlim = c(1, ii), ylim = c(1.5, 4), lwd = 2, type = "b",
+           main = "Iteration", ylab = "Parameter Estimate", xlab = "")
+      abline(h = mean(data), lty = 3)
+
     })
 
     output$new_raph_plot <- renderPlot(plot_new_raph("poisson", data, i(), input$strtval))

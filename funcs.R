@@ -89,6 +89,8 @@ plot_new_raph <- function(distribution, data = c(2,2,3,4,4), i, strt) {
     y <- loglik(x, data)
     y_dx <- grad(x, data)
 
+    par(mfrow = c(2, 1))
+
     plot(x, y, type = "l", xlim = c(1.5, 5.5), ylim = c(-3, 4.5), lwd = 2,
          main = "The Newton-Raphson-Algorithm", ylab = "Log Likelihood", xlab = expression(theta))
     lines(x, y_dx, col = "red")
@@ -99,17 +101,23 @@ plot_new_raph <- function(distribution, data = c(2,2,3,4,4), i, strt) {
            lwd = 2)
 
     if(i > nrow(hist)){
-      i <- i - 1
+      i <- nrow(hist)
     }
 
-    # Draw point and slope dependent on selected iteration
-    text(2, -2, paste("Iter: ", i), pos = 2)
+    ##draw point and slope dependent on selected iteration
+    text(1.5, -3, paste("Iter: ", i, if(i == nrow(hist)) "(Converged)"), pos = 4)
     points(th.vec[i], LLp[i], col = "blue", pch = 20, lwd = 5)
     #clip(LLp[i]-1, LLp[i]+1, LLp[i]-1, LLp[i]+1)
     abline(LLp[i]-(LLp2[i]*th.vec[i]), LLp2[i], col = "green", lwd = 2) #abline(intercept, slope, color)
     #abline(v=th.vec[i+1], lty=3, lwd=2, col="green")
-    #clip(-5,5,0,LLp[i])
-    #abline(v=th.vec[i], lty = 2, lwd = 2, col = "green")
+    clip(-5,5,0,LLp[i])
+    abline(v=th.vec[i], lty = 2, lwd = 2, col = "green")
+
+
+    # Plot the iteration history:
+    plot(1:i, th.vec[1:i], xlim = c(1, i), ylim = c(1.5, 4), lwd = 2, type = "b",
+         main = "Iteration", ylab = "Parameter Estimate", xlab = "")
+    abline(h = mean(data), lty = 3)
 }
 
 new_raph <- function(data, distribution, start_pos) {
