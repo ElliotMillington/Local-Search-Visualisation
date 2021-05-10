@@ -7,6 +7,13 @@ loglikpois <- function(data, theta, n) {
   return(out)
 }
 
+loglikbinom <- function(successes=7,theta,n=10){
+  ll <- successes*log(theta)+(n-successes)*log(1-theta)
+  grad <- successes/theta - (n-successes)/(1-theta)
+  hess <- -successes/theta^2 - (n-successes)/(1-theta)^2
+  out<-list(ll=ll,grad=grad,hess=hess)
+  return(out)
+}
 # loglikfun <- function(distribution) {
 #   out <- c()
 #   if (distribution == "poisson") {
@@ -16,36 +23,43 @@ loglikpois <- function(data, theta, n) {
 #   return(out)
 # }
 
-plot_steep <- function(data, strt, convval) {
-  iterhist <- steep_accent(strtval, data, convval)
-  loglik <- switch(distribution,
-                   "poisson" = poisson_lik)
-
-  if(i() > nrow(iterhist)){
-    i(i() - 1)
-  }
-
-  x <- seq(1.5, 4, by = 0.1)
-  y <- loglikpois(x, data)
-
-  plot(loglikpois, xlim = c(1.5, 4), ylim = c(-2, 2), lwd = 2,
-       main = "The Steepest-Ascent Algorithm", ylab = "Log Likelihood", xlab = "")
-}
-
+# plot_steep <- function(data, strt, convval) {
+#   iterhist <- steep_accent(strtval, data, convval)
+#   loglik <- switch(distribution,
+#                    "poisson" = poisson_lik)
+#
+#   if(i() > nrow(iterhist)){
+#     i(i() - 1)
+#   }
+#
+#   x <- seq(1.5, 4, by = 0.1)
+#   y <- loglikpois(x, data)
+#
+#   plot(loglikpois, xlim = c(1.5, 4), ylim = c(-2, 2), lwd = 2,
+#        main = "The Steepest-Ascent Algorithm", ylab = "Log Likelihood", xlab = "")
+# }
+#
 steep_accent <- function(strtval, data, delta, maxiter = 500, alpha = 0.015,
-                         LL = NULL, LLp = NULL){
-
+                         LL = NULL, LLp = NULL, distribution = 1){
   th.vec <- strtval
-  n <- length(data)
 
-  out <- loglikpois(data, th.vec[1], n)
+  if(distribution==1){
+    n <- length(data)
+    out <- loglikpois(data, th.vec[1], n)
+  }else{
+    out <- loglikbinom(theta = th.vec[1])
+  }
   LL[1] <- out$ll; LLp[1] <- out$grad
   convergence <- FALSE
   i <- 1
   while ((!convergence) & (i < maxiter))
   {
     th.vec[i+1] <- th.vec[i] + alpha*out$grad
+    if(distribution==1){
     out <- loglikpois(data, th.vec[i+1], n)
+    }else{
+      out <- loglikbinom(theta = th.vec[i+1])
+    }
     LL[i+1] <- out$ll; LLp[i+1] <- out$grad
     if ((abs(th.vec[i+1]-th.vec[i])) < delta) { convergence <- TRUE }
     i <- i+1
@@ -99,7 +113,6 @@ plot_new_raph <- function(distribution, data = c(2,2,3,4,4), i, strt) {
 new_raph <- function(data, distribution, start_pos) {
   loglikpois_df <- switch(distribution,
                        "poisson" = poisson_lik_df)
-
   # Newton-Raphson algorithm
   maxiter=500; delta=10^-6
   th.vec=NULL; LL=NULL; LLp=NULL; LLp2=NULL
