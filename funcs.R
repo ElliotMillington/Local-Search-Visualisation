@@ -101,11 +101,11 @@ plot_new_raph <- function(distribution, data = c(2,2,3,4,4), i, strt) {
            lwd = 2)
 
     if(i > nrow(hist)){
-      i <- i - 1
+      i <- nrow(hist)
     }
 
-    # Draw point and slope dependent on selected iteration
-    text(2, -2, paste("Iter: ", i), pos = 2)
+    ##draw point and slope dependent on selected iteration
+    text(1.5, -3, paste("Iter: ", i, if(i == nrow(hist)) "(Converged)"), pos = 4)
     points(th.vec[i], LLp[i], col = "blue", pch = 20, lwd = 5)
     #clip(LLp[i]-1, LLp[i]+1, LLp[i]-1, LLp[i]+1)
     abline(LLp[i]-(LLp2[i]*th.vec[i]), LLp2[i], col = "green", lwd = 2) #abline(intercept, slope, color)
