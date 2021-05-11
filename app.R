@@ -64,9 +64,21 @@ server <- function(input, output, session) {
   i       <- reactiveVal(1)
   history <- get_iter_history(input)
 
-
   output$accent   <- renderPlot({plot_accent(history$accent, i())})
   output$newtraph <- renderPlot({plot_newtraph(history$newtraph, i())})
+
+
+  test <- function(x) {
+    x * sin(x)
+  }
+
+  output$intro <- renderPlot({
+
+    par(mfrow=c(1,2))
+    plot(loglikpois(seq(0, 5, 0.01), 31, 1)$ll, type = "l", xaxt='n', yaxt = 'n',
+         ylab = "Log Likelihood", xlab = expression(theta), main = "A")
+    plot(test(seq(0, 4*pi, 0.01)), type = "l", xaxt='n', yaxt = 'n',
+         ylab = "Log Likelihood", xlab = expression(theta), main = "B")})
 
   #### buttons handling ####
   observeEvent(input$reset, {
