@@ -34,9 +34,9 @@ ui <- dashboardPage(
 
         conditionalPanel(
           "input.func == 1",
-          sliderInput("pois_start_val", "Starting value", 1.5, min = 1, max = 5),
-          sliderInput("pois_mean",      "Mean",           2.5, min = 1, max = 5),
-          sliderInput("pois_n",         "Observations",   10,  min = 1, max = 100)
+          sliderInput("pois_start_val", "Starting value", 1.5, min = 1,   max = 5,   step = 0.10),
+          sliderInput("pois_mean",      "Mean",           2.5, min = 1.5, max = 4.5, step = 0.10),
+          sliderInput("pois_n",         "Observations",   10,  min = 1,   max = 100)
         ),
         conditionalPanel(
           "input.func == 2",
@@ -89,13 +89,13 @@ server <- function(input, output, session) {
 
     output$accent <- renderPlot({
       ii <<- ii + 1
-      invalidateLaterNew(100, session,  ii < length(history$accent$theta))
+      invalidateLaterNew(100, session,  ii <= length(history$accent$theta))
       plot_accent(history$accent, ii)
     })
 
     output$newtraph <- renderPlot({
       jj <<- jj + 1
-      invalidateLaterNew(100, session,  jj < length(history$accent$theta))
+      invalidateLaterNew(100, session,  jj <= length(history$accent$theta))
       plot_newtraph(history$newtraph, jj)
     })
 
