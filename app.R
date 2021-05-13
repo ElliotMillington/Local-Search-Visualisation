@@ -101,13 +101,13 @@ server <- function(input, output, session) {
 
     output$accent <- renderPlot({
       ii <<- ii + 1
-      invalidateLaterNew(100, session,  ii <= length(history$accent$theta))
+      invalidateLaterNew(400, session,  ii <= length(history$accent$theta))
       plot_accent(history$accent, ii)
     })
 
     output$newtraph <- renderPlot({
       jj <<- jj + 1
-      invalidateLaterNew(100, session,  jj <= length(history$accent$theta))
+      invalidateLaterNew(400, session,  jj <= length(history$accent$theta))
       plot_newtraph(history$newtraph, jj)
     })
 
