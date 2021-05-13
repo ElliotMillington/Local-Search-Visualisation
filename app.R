@@ -41,8 +41,8 @@ ui <- dashboardPage(
         conditionalPanel(
           "input.func == 2",
           sliderInput("binom_start_val", "Starting value", .5, min = 0, max = 1),
-          sliderInput("binom_successes", "Successes",       3, min = 1, max = 100),
-          sliderInput("binom_n",         "Observations",   10, min = 1, max = 100)
+          sliderInput("binom_successes", "Successes",       3, min = 1, max = 10),
+          sliderInput("binom_failures",  "Failures",        7, min = 1, max = 10)
         ),
 
         numericInput("criterion", "Convergence criterion", 1e-5, min = 1e-10, max = 1e-3)
