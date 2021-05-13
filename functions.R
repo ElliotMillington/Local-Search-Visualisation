@@ -14,7 +14,7 @@ t_data        <- function(input){
       mean = if(is.null(input$pois_mean)) 2.5 else input$pois_mean
     ),
     "binom" = list(
-      n         = if(is.null(input$binom_n))         10 else input$binom_n,
+      n         = if(is.null(input$binom_failures) | is.null(input$binom_successes))  10 else input$binom_successes + input$binom_failures,
       successes = if(is.null(input$binom_successes))  3 else input$binom_successes)
   )
 }
