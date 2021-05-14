@@ -35,7 +35,7 @@ accent_tab <- tabItem(
     The ", strong("Reset") ," button allows restarting the visualization after the change of any of these parameters. "),
   p("The ",strong("Next step")," button allows the user to visualize each step of the procedure.
      In the upper figure, the black line is the log-likelihood.
-     The current point \\(\\theta^{t-1}\\) is represented by the ", span("blue dot",style= "color:blue"),", the continuous ", span("red segment",style= "color:red")," is the local approximation, the ", span("grey dot",style= "color:grey")," is the estimation of $\theta$ at the next step and finally, the vertical dashed lines indicate the maximum of the likelihood function.
+     The current point \\(\\theta^{t-1}\\) is represented by the ", span("blue dot",style= "color:blue"),", the continuous ", span("red segment",style= "color:red")," is the local approximation, the ", span("grey dot",style= "color:grey")," is the estimation of \\(\\theta\\) at the next step and finally, the vertical dashed lines indicate the maximum of the likelihood function.
      In the lower figure, on the x-axis, there are iterations and the black circles are the estimation of \\(\\theta\\) at that step. The green horizontal line is the true value of \\(\\theta\\)
      Finally, the", strong("Finish") ," button allows the algorithm to continue until the algorithm converges or the maximum number of iterations is reached."),
 
